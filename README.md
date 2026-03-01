@@ -2,7 +2,7 @@
 
 **Voice typing speed. Zero voice.**
 
-Being “voicepilled” was 2024. In 2025 you don’t need to use your voice at all. LipVisemes turns **lip-reading** into text—so you get a super smooth, fast typing flow even in public. No mumbling into your phone, no awkward “I’m talking to my computer” moments. Just you, the camera, and **~10–20× the speed of typing** with the same ease as voice input.
+Being “voicepilled” was 2024. In 2025 you don’t need to use your voice at all. LipVisemes turns **lip-reading** into text - so you get a super smooth, fast typing flow even in public. No mumbling into your phone, no awkward “I’m talking to my computer” moments. Just you, the camera, and **~10–20× the speed of typing** with the same ease as voice input.
 
 ---
 
