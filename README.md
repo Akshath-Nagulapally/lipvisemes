@@ -1,8 +1,14 @@
 # Vizem Flow
 
-**Voice typing speed. Zero voice.**
+Typing is slow. Voice typing is fast…but not always practical.
 
-Being “voicepilled” was 2024. In 2025 you don’t need to use your voice at all. Vizem Flow turns **lip-reading** into text - so you get a super smooth, fast typing flow even in public. No mumbling into your phone, no awkward “I’m talking to my computer” moments. Just you, the camera, and **~10–20× the speed of typing** with the same ease as voice input.
+Being “voicepilled” was 2025. In 2026, you don’t need to use your voice at all.
+
+Vizem Flow reads your lips and turns it into text. You get voice-level speed while staying completely silent. Just look at the camera and speak naturally. The words appear instantly.
+
+Meetings. Libraries. Class. On the train. Late at night next to someone sleeping. Social settings where talking to your device feels weird.
+
+Press a key in any app and it starts. It runs in the background and types wherever your cursor is. Messages. Docs. DMs. Search bars. Anywhere.
 
 ---
 
