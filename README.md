@@ -1,4 +1,4 @@
-# LipVisemes
+# Vizem Flow
 
 **Voice typing speed. Zero voice.**
 
