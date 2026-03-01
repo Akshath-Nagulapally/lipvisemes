@@ -2,7 +2,7 @@
 
 **Voice typing speed. Zero voice.**
 
-Being “voicepilled” was 2024. In 2025 you don’t need to use your voice at all. LipVisemes turns **lip-reading** into text - so you get a super smooth, fast typing flow even in public. No mumbling into your phone, no awkward “I’m talking to my computer” moments. Just you, the camera, and **~10–20× the speed of typing** with the same ease as voice input.
+Being “voicepilled” was 2024. In 2025 you don’t need to use your voice at all. Vizem Flow turns **lip-reading** into text - so you get a super smooth, fast typing flow even in public. No mumbling into your phone, no awkward “I’m talking to my computer” moments. Just you, the camera, and **~10–20× the speed of typing** with the same ease as voice input.
 
 ---
 
@@ -83,7 +83,7 @@ Without this file, the pipeline will raise a `FileNotFoundError` with the same U
 The decoder uses a **reference set of lip-shape vectors** per viseme, built from pre-labeled images:
 
 - **Reference images:** In `reference_target_labels.py`, `REFERENCE_IMAGES` maps viseme names to paths under `images_with_reference/` (e.g. images of you saying F, M, AH, etc.).
-- **Build reference features:** From the `lipvisemes` directory run:
+- **Build reference features:** From the `` directory run:
   ```bash
   uv run python extract_reference_features.py
   ```
@@ -93,14 +93,14 @@ If `reference_features.json` is missing, the code falls back to a simple rule-ba
 
 ### 4. Local env (optional, for running decode locally)
 
-Create a `.env` in the `lipvisemes` directory (do not commit):
+Create a `.env` in the `` directory (do not commit):
 
 ```env
 OPENAI_API_KEY=sk-...
 SUPERMEMORY_API_KEY=sm_...
 ```
 
-Use these for local runs (e.g. `uv run python lipvisemes.py path/to/video.mp4`).
+Use these for local runs (e.g. `uv run python .py path/to/video.mp4`).
 
 ### 5. Modal app setup
 
