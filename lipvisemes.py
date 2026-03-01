@@ -28,7 +28,7 @@ from reference_target_labels import (
     get_label_by_viseme,
 )
 
-# Load .env from the same directory as this script so GROQ_API_KEY is set
+# Load .env from the same directory as this script so OPENAI_API_KEY is set
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
 
@@ -179,7 +179,7 @@ def _get_supermemory_context(container_tag: str, query: str) -> str:
 def decode(sequence: list[str], *, silent: bool = False) -> str:
     """
     Decode the viseme/phoneme sequence into an actual sentence using an LLM.
-    Requires GROQ_API_KEY in the environment. Returns the decoded string only.
+    Requires OPENAI_API_KEY (or GROQ_API_KEY for local) in the environment. Returns the decoded string only.
     When SUPERMEMORY_API_KEY is set, uses Supermemory (single shared container) to
     inject profile + memories and to store each decoding.
     """
@@ -200,7 +200,8 @@ Sequence:
 """
     prompt += raw.strip()
 
-    api_key = os.environ.get("GROQ_API_KEY")
+    use_openai = bool(os.environ.get("OPENAI_API_KEY"))
+    api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("GROQ_API_KEY")
     if not api_key:
         return ""
 
@@ -211,14 +212,20 @@ Sequence:
             messages.append({"role": "system", "content": supermemory_ctx})
     messages.append({"role": "user", "content": prompt})
 
-    from groq import Groq
-    client = Groq(api_key=api_key)
+    if use_openai:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key)
+        model = "gpt-4o-mini"
+    else:
+        from groq import Groq
+        client = Groq(api_key=api_key)
+        model = "llama-3.3-70b-versatile"
     decoded: list[str] = []
     last_error: Exception | None = None
     for attempt in range(2):  # retry once on transient failure
         try:
             completion = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model=model,
                 messages=messages,
                 temperature=1,
                 max_completion_tokens=1024,

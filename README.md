@@ -12,7 +12,7 @@ We built a **personalized viseme model** from reference images with known labels
 
 1. **Reference images** — Photos of you (or the target speaker) saying specific sounds: e.g. one image saying **F**, one for **M**, **AH**, etc. Each image is already labeled with the viseme/phoneme it represents.
 2. **Lip geometry** — We run MediaPipe’s face landmarker on those images and compute **lip dimensions and spacing** (width, height, aspect ratios) for each label. Those vectors are averaged per viseme and saved as a reference set (e.g. `reference_features.json`).
-3. **Video → text** — For any new video, we run the same pipeline frame-by-frame on Modal’s infrastructure: MediaPipe extracts lip geometry per frame, we match it to the nearest reference viseme, and output a **phoneme/viseme sequence**. A fast LLM (Groq) plus **Supermemory** then decodes that sequence into a single, natural sentence.
+3. **Video → text** — For any new video, we run the same pipeline frame-by-frame on Modal’s infrastructure: MediaPipe extracts lip geometry per frame, we match it to the nearest reference viseme, and output a **phoneme/viseme sequence**. A fast LLM (OpenAI) plus **Supermemory** then decodes that sequence into a single, natural sentence.
 
 So: **your labeled reference images define “what an F (or M, AH, …) looks like” for your face; we apply that template across the whole video via Modal’s fast AI inference.**
 
@@ -34,9 +34,10 @@ flowchart LR
         F[Nearest viseme vs reference_features]
         G[Phoneme sequence]
         H[Supermemory: profile + memories]
-        I[Groq LLM]
+        I[OpenAI LLM]
         J[Decoded sentence]
         K[Supermemory: store result]
+        L[Response: decoded, error]
     end
 
     A --> B
@@ -51,10 +52,10 @@ flowchart LR
     I --> J
     J --> K
     K --> B
-    B --> L[{"decoded": "...", "error": null}]
+    B --> L
 ```
 
-**In words:** Upload an MP4 → Modal runs the viseme pipeline (MediaPipe + your reference features) → sequence of phoneme-like tokens → Groq LLM gets optional context from Supermemory and decodes to one sentence → response returned; the decode is also stored in Supermemory for future context.
+**In words:** Upload an MP4 → Modal runs the viseme pipeline (MediaPipe + your reference features) → sequence of phoneme-like tokens → OpenAI LLM gets optional context from Supermemory and decodes to one sentence → response returned; the decode is also stored in Supermemory for future context.
 
 ---
 
@@ -64,7 +65,7 @@ flowchart LR
 
 - **Python 3.12+** (e.g. `uv` or `pip`)
 - A **Modal** account ([modal.com](https://modal.com))
-- **Groq** API key ([console.groq.com](https://console.groq.com))
+- **OpenAI** API key ([platform.openai.com](https://platform.openai.com))
 - **Supermemory** API key ([console.supermemory.ai](https://console.supermemory.ai))
 - **MediaPipe face landmarker model** (see below)
 
@@ -95,7 +96,7 @@ If `reference_features.json` is missing, the code falls back to a simple rule-ba
 Create a `.env` in the `lipvisemes` directory (do not commit):
 
 ```env
-GROQ_API_KEY=gsk_...
+OPENAI_API_KEY=sk-...
 SUPERMEMORY_API_KEY=sm_...
 ```
 
@@ -111,11 +112,11 @@ pip install modal
 modal token new
 ```
 
-**Create Modal secrets** (so the cloud app can call Groq and Supermemory):
+**Create Modal secrets** (so the cloud app can call OpenAI and Supermemory):
 
 ```bash
-# Groq
-modal secret create groq-api-key GROQ_API_KEY=gsk_your_groq_key
+# OpenAI
+modal secret create openai-api-key OPENAI_API_KEY=sk_your_openai_key
 
 # Supermemory
 modal secret create supermemory-api-key SUPERMEMORY_API_KEY=sm_your_supermemory_key
@@ -129,7 +130,7 @@ From the repo root (directory containing `modal_app.py`):
 modal deploy modal_app.py
 ```
 
-Modal will build the image (OpenCV, MediaPipe, Groq, Supermemory, FastAPI), mount the app directory (so `face_landmarker.task`, `reference_features.json`, and `reference_target_labels.py` are available), and expose the HTTP endpoint.
+Modal will build the image (OpenCV, MediaPipe, OpenAI, Supermemory, FastAPI), mount the app directory (so `face_landmarker.task`, `reference_features.json`, and `reference_target_labels.py` are available), and expose the HTTP endpoint.
 
 **Get the endpoint URL** from the deploy output or:
 
@@ -162,5 +163,5 @@ Use a **long timeout** (e.g. 90s) and retry once on failure; decoding a full vid
 | **Input** | MP4 video (face visible, speaking). |
 | **Output** | One decoded sentence (JSON: `decoded`, `error`). |
 | **Personalization** | Reference images + `extract_reference_features.py` → `reference_features.json`. |
-| **Cloud** | Modal runs the pipeline; Groq for the LLM; Supermemory for context and storage. |
+| **Cloud** | Modal runs the pipeline; OpenAI for the LLM; Supermemory for context and storage. |
 | **Why** | Voice-like speed and flow, without speaking—usable anywhere. |

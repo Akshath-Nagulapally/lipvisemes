@@ -1,7 +1,7 @@
 """
 Modal FastAPI endpoint: POST an MP4 file, get back the decoded string only.
 Requires Modal Secrets:
-  - "groq-api-key" with key GROQ_API_KEY
+  - "openai-api-key" with key OPENAI_API_KEY
   - "supermemory-api-key" with key SUPERMEMORY_API_KEY
 """
 import os
@@ -23,7 +23,7 @@ lipvisemes_image = (
     .uv_pip_install(
         "opencv-python-headless",
         "mediapipe",
-        "groq",
+        "openai",
         "supermemory",
         "python-dotenv",
         "numpy",
@@ -32,13 +32,13 @@ lipvisemes_image = (
     .add_local_dir(Path(__file__).parent, "/app")
 )
 
-GROQ_SECRET = modal.Secret.from_name("groq-api-key", required_keys=["GROQ_API_KEY"])
+OPENAI_SECRET = modal.Secret.from_name("openai-api-key", required_keys=["OPENAI_API_KEY"])
 SUPERMEMORY_SECRET = modal.Secret.from_name("supermemory-api-key", required_keys=["SUPERMEMORY_API_KEY"])
 
 
 @app.function(
     image=lipvisemes_image,
-    secrets=[GROQ_SECRET, SUPERMEMORY_SECRET],
+    secrets=[OPENAI_SECRET, SUPERMEMORY_SECRET],
     timeout=300,
 )
 @modal.fastapi_endpoint(method="POST")
